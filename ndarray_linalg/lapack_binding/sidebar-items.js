@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["Eigh","wrapper for *syev functions in LAPACK"]]});
