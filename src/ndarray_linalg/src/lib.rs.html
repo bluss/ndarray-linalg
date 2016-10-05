@@ -94,23 +94,27 @@
 <span id="50">50</span>
 <span id="51">51</span>
 <span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
 </pre><pre class='rust '>
 
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>ndarray</span>;
+
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>lapack_binding</span>;
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>error</span>;
 
 <span class='kw'>use</span> <span class='ident'>ndarray</span>::<span class='ident'>prelude</span>::<span class='op'>*</span>;
 <span class='kw'>use</span> <span class='ident'>ndarray</span>::<span class='ident'>LinalgScalar</span>;
 <span class='kw'>use</span> <span class='ident'>lapack_binding</span>::<span class='ident'>Eigh</span>;
+<span class='kw'>use</span> <span class='ident'>error</span>::{<span class='ident'>LinalgError</span>, <span class='ident'>NotSquareError</span>};
 
 <span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>Matrix</span>: <span class='ident'>Sized</span> {
     <span class='kw'>type</span> <span class='ident'>Vector</span>;
     <span class='doccomment'>/// number of rows and cols</span>
     <span class='kw'>fn</span> <span class='ident'>size</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> (<span class='ident'>usize</span>, <span class='ident'>usize</span>);
-    <span class='kw'>fn</span> <span class='ident'>is_square</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
-        <span class='kw'>let</span> (<span class='ident'>rows</span>, <span class='ident'>cols</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>size</span>();
-        <span class='ident'>rows</span> <span class='op'>==</span> <span class='ident'>cols</span>
-    }
     <span class='comment'>// fn svd(self) -&gt; (Self, Self::Vector, Self);</span>
 }
 
@@ -119,7 +123,18 @@
     <span class='comment'>// fn lu(self) -&gt; (Self, Self);</span>
     <span class='comment'>// fn eig(self) -&gt; (Self::Vector, Self);</span>
     <span class='doccomment'>/// eigenvalue decomposition for Hermite matrix</span>
-    <span class='kw'>fn</span> <span class='ident'>eigh</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='self'>Self</span>::<span class='ident'>Vector</span>, <span class='self'>Self</span>)<span class='op'>&gt;</span>;
+    <span class='kw'>fn</span> <span class='ident'>eigh</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(<span class='self'>Self</span>::<span class='ident'>Vector</span>, <span class='self'>Self</span>), <span class='ident'>LinalgError</span><span class='op'>&gt;</span>;
+    <span class='kw'>fn</span> <span class='ident'>check_square</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>NotSquareError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> (<span class='ident'>rows</span>, <span class='ident'>cols</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>size</span>();
+        <span class='kw'>if</span> <span class='ident'>rows</span> <span class='op'>==</span> <span class='ident'>cols</span> {
+            <span class='prelude-val'>Ok</span>(())
+        } <span class='kw'>else</span> {
+            <span class='prelude-val'>Err</span>(<span class='ident'>NotSquareError</span> {
+                <span class='ident'>rows</span>: <span class='ident'>rows</span>,
+                <span class='ident'>cols</span>: <span class='ident'>cols</span>,
+            })
+        }
+    }
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> <span class='ident'>Matrix</span> <span class='kw'>for</span> <span class='ident'>Array</span><span class='op'>&lt;</span><span class='ident'>A</span>, (<span class='ident'>Ix</span>, <span class='ident'>Ix</span>)<span class='op'>&gt;</span> {
@@ -132,19 +147,14 @@
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> <span class='ident'>SquareMatrix</span> <span class='kw'>for</span> <span class='ident'>Array</span><span class='op'>&lt;</span><span class='ident'>A</span>, (<span class='ident'>Ix</span>, <span class='ident'>Ix</span>)<span class='op'>&gt;</span>
     <span class='kw'>where</span> <span class='ident'>A</span>: <span class='ident'>Eigh</span> <span class='op'>+</span> <span class='ident'>LinalgScalar</span>
 {
-    <span class='kw'>fn</span> <span class='ident'>eigh</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='self'>Self</span>::<span class='ident'>Vector</span>, <span class='self'>Self</span>)<span class='op'>&gt;</span> {
-        <span class='kw'>if</span> <span class='op'>!</span><span class='self'>self</span>.<span class='ident'>is_square</span>() {
-            <span class='kw'>return</span> <span class='prelude-val'>None</span>;
-        }
+    <span class='kw'>fn</span> <span class='ident'>eigh</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(<span class='self'>Self</span>::<span class='ident'>Vector</span>, <span class='self'>Self</span>), <span class='ident'>LinalgError</span><span class='op'>&gt;</span> {
+        <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>check_square</span>());
         <span class='kw'>let</span> (<span class='ident'>rows</span>, <span class='ident'>cols</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>size</span>();
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>a</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>into_raw_vec</span>();
-        <span class='kw'>let</span> <span class='ident'>w</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='ident'>Eigh</span>::<span class='ident'>syev</span>(<span class='ident'>rows</span> <span class='kw'>as</span> <span class='ident'>i32</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>a</span>) {
-            <span class='prelude-val'>Some</span>(<span class='ident'>w</span>) <span class='op'>=&gt;</span> <span class='ident'>w</span>,
-            <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='kw'>return</span> <span class='prelude-val'>None</span>,
-        };
+        <span class='kw'>let</span> <span class='ident'>w</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Eigh</span>::<span class='ident'>syev</span>(<span class='ident'>rows</span> <span class='kw'>as</span> <span class='ident'>i32</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>a</span>));
         <span class='kw'>let</span> <span class='ident'>ea</span> <span class='op'>=</span> <span class='ident'>Array</span>::<span class='ident'>from_vec</span>(<span class='ident'>w</span>);
         <span class='kw'>let</span> <span class='ident'>va</span> <span class='op'>=</span> <span class='ident'>Array</span>::<span class='ident'>from_vec</span>(<span class='ident'>a</span>).<span class='ident'>into_shape</span>((<span class='ident'>rows</span>, <span class='ident'>cols</span>)).<span class='ident'>unwrap</span>().<span class='ident'>reversed_axes</span>();
-        <span class='prelude-val'>Some</span>((<span class='ident'>ea</span>, <span class='ident'>va</span>))
+        <span class='prelude-val'>Ok</span>((<span class='ident'>ea</span>, <span class='ident'>va</span>))
     }
 }
 </pre>
