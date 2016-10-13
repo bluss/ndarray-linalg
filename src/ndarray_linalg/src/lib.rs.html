@@ -98,7 +98,6 @@
 <span id="54">54</span>
 <span id="55">55</span>
 <span id="56">56</span>
-<span id="57">57</span>
 </pre><pre class='rust '>
 
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>ndarray</span>;
@@ -150,8 +149,7 @@
     <span class='kw'>fn</span> <span class='ident'>eigh</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(<span class='self'>Self</span>::<span class='ident'>Vector</span>, <span class='self'>Self</span>), <span class='ident'>LinalgError</span><span class='op'>&gt;</span> {
         <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>check_square</span>());
         <span class='kw'>let</span> (<span class='ident'>rows</span>, <span class='ident'>cols</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>size</span>();
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>a</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>into_raw_vec</span>();
-        <span class='kw'>let</span> <span class='ident'>w</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Eigh</span>::<span class='ident'>syev</span>(<span class='ident'>rows</span> <span class='kw'>as</span> <span class='ident'>i32</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>a</span>));
+        <span class='kw'>let</span> (<span class='ident'>w</span>, <span class='ident'>a</span>) <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>Eigh</span>::<span class='ident'>eigh</span>(<span class='ident'>rows</span>, <span class='self'>self</span>.<span class='ident'>into_raw_vec</span>()));
         <span class='kw'>let</span> <span class='ident'>ea</span> <span class='op'>=</span> <span class='ident'>Array</span>::<span class='ident'>from_vec</span>(<span class='ident'>w</span>);
         <span class='kw'>let</span> <span class='ident'>va</span> <span class='op'>=</span> <span class='ident'>Array</span>::<span class='ident'>from_vec</span>(<span class='ident'>a</span>).<span class='ident'>into_shape</span>((<span class='ident'>rows</span>, <span class='ident'>cols</span>)).<span class='ident'>unwrap</span>().<span class='ident'>reversed_axes</span>();
         <span class='prelude-val'>Ok</span>((<span class='ident'>ea</span>, <span class='ident'>va</span>))
