@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["error",""],["lapack_binding",""]],"trait":[["Matrix",""],["SquareMatrix",""]]});
+initSidebarItems({"fn":[["norm",""]],"mod":[["error",""],["lapack_binding",""]],"trait":[["Matrix",""],["SquareMatrix",""],["Vector",""]]});
