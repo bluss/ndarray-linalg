@@ -47,14 +47,14 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-158' class='srclink' href='../src/ndarray_linalg/src/lib.rs.html#26-35' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-174' class='srclink' href='../src/ndarray_linalg/src/lib.rs.html#26-35' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait Matrix: <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a> {
     type <a href='#associatedtype.Scalar' class='type'>Scalar</a>;
     type <a href='#associatedtype.Vector' class='type'>Vector</a>;
     fn <a href='#tymethod.size' class='fnname'>size</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>, <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>)</a>;
-    fn <a href='#tymethod.norm_1' class='fnname'>norm_1</a>(&amp;self) -&gt; Self::<a class='trait' href='../ndarray_linalg/trait.Matrix.html' title='ndarray_linalg::Matrix'>Scalar</a>;
-    fn <a href='#tymethod.norm_i' class='fnname'>norm_i</a>(&amp;self) -&gt; Self::<a class='trait' href='../ndarray_linalg/trait.Matrix.html' title='ndarray_linalg::Matrix'>Scalar</a>;
-    fn <a href='#tymethod.norm_f' class='fnname'>norm_f</a>(&amp;self) -&gt; Self::<a class='trait' href='../ndarray_linalg/trait.Matrix.html' title='ndarray_linalg::Matrix'>Scalar</a>;
+    fn <a href='#tymethod.norm_1' class='fnname'>norm_1</a>(&amp;self) -&gt; Self::Scalar;
+    fn <a href='#tymethod.norm_i' class='fnname'>norm_i</a>(&amp;self) -&gt; Self::Scalar;
+    fn <a href='#tymethod.norm_f' class='fnname'>norm_f</a>(&amp;self) -&gt; Self::Scalar;
 }</pre>
             <h2 id='associated-types'>Associated Types</h2>
             <div class='methods'>
@@ -62,7 +62,7 @@
             <h2 id='required-methods'>Required Methods</h2>
             <div class='methods'>
         <h3 id='tymethod.size' class='method stab '><code>fn <a href='#tymethod.size' class='fnname'>size</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>, <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>)</a></code></h3><div class='docblock'><p>number of rows and cols</p>
-</div><h3 id='tymethod.norm_1' class='method stab '><code>fn <a href='#tymethod.norm_1' class='fnname'>norm_1</a>(&amp;self) -&gt; Self::<a class='trait' href='../ndarray_linalg/trait.Matrix.html' title='ndarray_linalg::Matrix'>Scalar</a></code></h3><h3 id='tymethod.norm_i' class='method stab '><code>fn <a href='#tymethod.norm_i' class='fnname'>norm_i</a>(&amp;self) -&gt; Self::<a class='trait' href='../ndarray_linalg/trait.Matrix.html' title='ndarray_linalg::Matrix'>Scalar</a></code></h3><h3 id='tymethod.norm_f' class='method stab '><code>fn <a href='#tymethod.norm_f' class='fnname'>norm_f</a>(&amp;self) -&gt; Self::<a class='trait' href='../ndarray_linalg/trait.Matrix.html' title='ndarray_linalg::Matrix'>Scalar</a></code></h3></div>
+</div><h3 id='tymethod.norm_1' class='method stab '><code>fn <a href='#tymethod.norm_1' class='fnname'>norm_1</a>(&amp;self) -&gt; Self::Scalar</code></h3><h3 id='tymethod.norm_i' class='method stab '><code>fn <a href='#tymethod.norm_i' class='fnname'>norm_i</a>(&amp;self) -&gt; Self::Scalar</code></h3><h3 id='tymethod.norm_f' class='method stab '><code>fn <a href='#tymethod.norm_f' class='fnname'>norm_f</a>(&amp;self) -&gt; Self::Scalar</code></h3></div>
         <h2 id='implementors'>Implementors</h2>
         <ul class='item-list' id='implementors-list'>
     <li><code>impl&lt;A:&nbsp;<a class='trait' href='../ndarray_linalg/lapack_binding/trait.LapackScalar.html' title='ndarray_linalg::lapack_binding::LapackScalar'>LapackScalar</a>&gt; Matrix for <a class='type' href='http://bluss.github.io/rust-ndarray/master/ndarray/type.Array.html' title='ndarray::Array'>Array</a>&lt;A,&nbsp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(</a><a class='type' href='http://bluss.github.io/rust-ndarray/master/ndarray/type.Ix.html' title='ndarray::Ix'>Ix</a>, <a class='type' href='http://bluss.github.io/rust-ndarray/master/ndarray/type.Ix.html' title='ndarray::Ix'>Ix</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>)</a>&gt;</code></li>
