@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["LapackScalar","Eigenvalue decomposition for Hermite matrix"]]});
+initSidebarItems({"trait":[["LapackScalar",""]]});
