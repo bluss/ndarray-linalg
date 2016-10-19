@@ -146,6 +146,17 @@
 <span id="102">102</span>
 <span id="103">103</span>
 <span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
 </pre><pre class='rust '>
 
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>ndarray</span>;
@@ -191,6 +202,7 @@
     <span class='kw'>fn</span> <span class='ident'>eigh</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(<span class='self'>Self</span>::<span class='ident'>Vector</span>, <span class='self'>Self</span>), <span class='ident'>LinalgError</span><span class='op'>&gt;</span>;
     <span class='doccomment'>/// inverse of matrix</span>
     <span class='kw'>fn</span> <span class='ident'>inv</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='self'>Self</span>, <span class='ident'>LinalgError</span><span class='op'>&gt;</span>;
+    <span class='kw'>fn</span> <span class='ident'>trace</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='self'>Self</span>::<span class='ident'>Scalar</span>, <span class='ident'>LinalgError</span><span class='op'>&gt;</span>;
     <span class='kw'>fn</span> <span class='ident'>check_square</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>NotSquareError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> (<span class='ident'>rows</span>, <span class='ident'>cols</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>size</span>();
         <span class='kw'>if</span> <span class='ident'>rows</span> <span class='op'>==</span> <span class='ident'>cols</span> {
@@ -246,9 +258,19 @@
     <span class='kw'>fn</span> <span class='ident'>inv</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='self'>Self</span>, <span class='ident'>LinalgError</span><span class='op'>&gt;</span> {
         <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>check_square</span>());
         <span class='kw'>let</span> (<span class='ident'>n</span>, _) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>size</span>();
+        <span class='kw'>let</span> <span class='ident'>is_fortran_align</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>strides</span>()[<span class='number'>0</span>] <span class='op'>&gt;</span> <span class='self'>self</span>.<span class='ident'>strides</span>()[<span class='number'>1</span>];
         <span class='kw'>let</span> <span class='ident'>a</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>LapackScalar</span>::<span class='ident'>inv</span>(<span class='ident'>n</span>, <span class='self'>self</span>.<span class='ident'>into_raw_vec</span>()));
         <span class='kw'>let</span> <span class='ident'>m</span> <span class='op'>=</span> <span class='ident'>Array</span>::<span class='ident'>from_vec</span>(<span class='ident'>a</span>).<span class='ident'>into_shape</span>((<span class='ident'>n</span>, <span class='ident'>n</span>)).<span class='ident'>unwrap</span>();
-        <span class='prelude-val'>Ok</span>(<span class='ident'>m</span>)
+        <span class='kw'>if</span> <span class='ident'>is_fortran_align</span> {
+            <span class='prelude-val'>Ok</span>(<span class='ident'>m</span>)
+        } <span class='kw'>else</span> {
+            <span class='prelude-val'>Ok</span>(<span class='ident'>m</span>.<span class='ident'>reversed_axes</span>())
+        }
+    }
+    <span class='kw'>fn</span> <span class='ident'>trace</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='self'>Self</span>::<span class='ident'>Scalar</span>, <span class='ident'>LinalgError</span><span class='op'>&gt;</span> {
+        <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>check_square</span>());
+        <span class='kw'>let</span> (<span class='ident'>n</span>, _) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>size</span>();
+        <span class='prelude-val'>Ok</span>((<span class='number'>0</span>..<span class='ident'>n</span>).<span class='ident'>fold</span>(<span class='ident'>A</span>::<span class='ident'>zero</span>(), <span class='op'>|</span><span class='ident'>sum</span>, <span class='ident'>i</span><span class='op'>|</span> <span class='ident'>sum</span> <span class='op'>+</span> <span class='self'>self</span>[(<span class='ident'>i</span>, <span class='ident'>i</span>)]))
     }
 }
 </pre>
