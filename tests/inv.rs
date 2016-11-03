@@ -9,13 +9,8 @@ use linalg::SquareMatrix;
 use rand::distributions::*;
 use ndarray_rand::RandomExt;
 
-fn all_close(a: Array<f64, (Ix, Ix)>, b: Array<f64, (Ix, Ix)>) {
-    if !a.all_close(&b, 1.0e-7) {
-        panic!("\nTwo matrices are not equal:\na = \n{:?}\nb = \n{:?}\n",
-               a,
-               b);
-    }
-}
+mod test_helper;
+use test_helper::*;
 
 #[test]
 fn inv_random() {
