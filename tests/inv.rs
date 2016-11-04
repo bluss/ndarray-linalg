@@ -9,8 +9,8 @@ use linalg::SquareMatrix;
 use rand::distributions::*;
 use ndarray_rand::RandomExt;
 
-mod test_helper;
-use test_helper::*;
+mod common;
+use common::*;
 
 #[test]
 fn inv_random() {

@@ -1,17 +1,12 @@
 
 extern crate ndarray;
-extern crate ndarray_linalg as linalg;
+extern crate ndarray_rand;
 
 use ndarray::prelude::*;
 use linalg::SquareMatrix;
 
-fn assert_almost_eq(a: f64, b: f64) {
-    let rel_dev = (a - b).abs() / (a.abs() + b.abs());
-    if rel_dev > 1.0e-7 {
-        panic!("a={:?}, b={:?} are not almost equal", a, b);
-    }
-}
-
+mod common;
+use common::*;
 
 #[test]
 fn eigen_vector_manual() {
@@ -31,6 +26,6 @@ fn diagonalize() {
     let (e, vecs) = a.clone().eigh().unwrap();
     let s = vecs.t().dot(&a).dot(&vecs);
     for i in 0..3 {
-        assert_almost_eq(e[i], s[(i, i)]);
+        is_close(e[i], s[(i, i)]);
     }
 }

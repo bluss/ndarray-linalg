@@ -1,13 +1,8 @@
 
-extern crate rand;
-extern crate ndarray;
-extern crate ndarray_rand;
-extern crate ndarray_linalg as linalg;
-
-use ndarray::prelude::*;
-use linalg::*;
-use rand::distributions::*;
-use ndarray_rand::RandomExt;
+use self::ndarray::prelude::*;
+use self::linalg::*;
+use self::rand::distributions::*;
+use self::ndarray_rand::RandomExt;
 
 pub fn is_close(a: f64, b: f64) {
     let rel_dev = (a - b).abs() / (a.abs() + b.abs());
@@ -47,11 +42,4 @@ pub fn random_upper(n: usize, m: usize) -> Array<f64, (Ix, Ix)> {
         }
     }
     a
-}
-
-#[test]
-fn is_unitary() {
-    let q = random_unitary(3);
-    let i = Array::<f64, _>::eye(3);
-    all_close(q.dot(&q.t()), i);
 }
